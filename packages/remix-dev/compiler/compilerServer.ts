@@ -124,7 +124,7 @@ async function writeServerBuildResult(
   await fse.ensureDir(path.dirname(config.serverBuildPath));
 
   for (let file of outputFiles) {
-    if (file.path.endsWith(".js")) {
+    if (file.path.endsWith(".js") || file.path.endsWith(".mjs") || file.path.endsWith(".cjs")) {
       // fix sourceMappingURL to be relative to current path instead of /build
       let filename = file.path.substring(file.path.lastIndexOf(path.sep) + 1);
       let escapedFilename = filename.replace(/\./g, "\\.");

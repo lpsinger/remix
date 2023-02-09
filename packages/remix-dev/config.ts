@@ -130,7 +130,8 @@ export interface AppConfig {
 
   /**
    * The path to the server build file, relative to `remix.config.js`. This file
-   * should end in a `.js` extension and should be deployed to your server.
+   * should end in a `.js`, `.cjs`, or `.mjs` extension and should be deployed
+   * to your server.
    */
   serverBuildPath?: string;
 
@@ -387,6 +388,7 @@ export async function readConfig(
     appConfig.serverBuildTarget ?? ""
   );
   let isDenoRuntime = appConfig.serverBuildTarget === "deno";
+  let isArcRuntime = appConfig.serverBuildTarget === "arc";
 
   let serverBuildPath = resolveServerBuildPath(rootDirectory, appConfig);
   let serverBuildTarget = appConfig.serverBuildTarget;
@@ -414,6 +416,9 @@ export async function readConfig(
     serverMainFields ??= ["module", "main"];
     serverModuleFormat = "esm";
     serverPlatform = "neutral";
+  }
+  if (isArcRuntime) {
+    serverModuleFormat = "esm";
   }
   serverMainFields ??=
     serverModuleFormat === "esm" ? ["module", "main"] : ["main", "module"];
@@ -603,7 +608,7 @@ const resolveServerBuildPath = (
 
   switch (appConfig.serverBuildTarget) {
     case "arc":
-      serverBuildPath = "server/index.js";
+      serverBuildPath = "server/index.mjs";
       break;
     case "cloudflare-pages":
       serverBuildPath = "functions/[[path]].js";
